@@ -17,7 +17,7 @@ last_day = today + datetime.timedelta(days=-1)
 last_date = last_day.isoformat()
 
 # set Czech locale
-locale.setlocale(locale.LC_ALL, 'cs_CZ.UTF-8')
+# locale.setlocale(locale.LC_ALL, 'cs_CZ.UTF-8')
 
 # read data from UZIS
 url = "https://share.uzis.cz/s/dCZBiARJ27ayeoS/download?path=%2F&files=obec.csv"
@@ -192,16 +192,4 @@ for vuc in vu_codes:
 # save
 data.to_csv("table_" + last_date + ".csv", index=False, decimal=",", float_format="%.1f")
 
-
-
-# cdf = df[df['datum']==day.isoformat()[0:10]]
-# cdf.set_index('obec_kod')
-
-# cdf[cdf['počet obyv.'].isna()]
-
-# ['obec_kod', 'aktualne_nemocnych']
-
-df[df['obec_kod'] == 565636]
-
-
-locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+# locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
