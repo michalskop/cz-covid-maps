@@ -135,7 +135,7 @@ data['population'] = data['population'].apply(lambda x: "{:,}".format(x).replace
 #     data = data[data.code != vuc]
 
 data = data.rename(columns={'population': 'počet obyv.'})
-data.to_csv("weekly_" + last_date + ".csv", index=False, decimal=",", float_format="%.1f")
+data.to_csv("weekly.csv", index=False, decimal=",", float_format="%.1f")
 
 # PUTTING TOGETHER CURRENT
 # origin
@@ -163,7 +163,7 @@ data['population'] = data['population'].apply(lambda x: "{:,}".format(x).replace
 #     data = data[data.code != vuc]
 
 data = data.rename(columns={'population': 'počet obyv.'})
-data.to_csv("current_" + last_date + ".csv", index=False, decimal=",", float_format="%.1f")
+data.to_csv("current.csv", index=False, decimal=",", float_format="%.1f")
 
 # PUTTING TOGETHER TABLE
 data = origin[['pretty_name', 'code', 'population']]
@@ -190,6 +190,6 @@ data = data.rename(columns={'population': 'počet obyv.', 'pretty_name': 'obec'}
 for vuc in vu_codes:
     data = data[data.code != vuc]
 # save
-data.to_csv("table_" + last_date + ".csv", index=False, decimal=",", float_format="%.1f")
+data.to_csv("table.csv", index=False, decimal=",", float_format="%.1f")
 
 # locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
