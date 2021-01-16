@@ -21,7 +21,8 @@ last_date = last_day.isoformat()
 
 # read data from UZIS
 url = "https://share.uzis.cz/s/dCZBiARJ27ayeoS/download?path=%2F&files=obec.csv"
-df = pd.read_csv(url, delimiter=";")
+url = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/obce.csv"
+df = pd.read_csv(url, delimiter=",")
 
 # remove non existing Brdy and 999999
 df = df[df.obec_kod != 539996]
@@ -77,7 +78,7 @@ for i in range(0, (last_day - first_day).days + 1):
     cdf = df[df['datum']==day.isoformat()[0:10]]
     cdf = cdf.set_index('obec_kod')
     cdf = cdf.join(origin.set_index('code'), on='obec_kod')
-    cdf['current_density'] = round(cdf['aktualne_nemocnych'] / cdf['population'] * 100000 * 10) / 10
+    cdf['current_density'] = round(cdf['aktivni_pripady'] / cdf['population'] * 100000 * 10) / 10
     currents = currents.merge(cdf['current_density'].to_frame(), left_on='code', right_on='obec_kod')
     currents['current_density'] = currents['current_density'].apply(lambda x: "{:,}".format(x).replace(',', ' ').replace('.', ','))
     currents = currents.rename(columns={'current_density': formatted_day})
@@ -97,14 +98,14 @@ for i in range(0, (last_day - first_day).days + 1):
         tooltips_values['nove_pripady'] = tooltips_values['nove_pripady'].apply(lambda x: "{:,}".format(x).replace(',', ' ').replace('.', ','))
         tooltips_values = tooltips_values.rename(columns={'nove_pripady': 'value_' + str(delay)})
         # current values and rename
-        tooltips2_values = tooltips2_values.merge(cdf['aktualne_nemocnych'].to_frame(), left_on='code', right_on='obec_kod')
-        tooltips2_values['aktualne_nemocnych'] = tooltips2_values['aktualne_nemocnych'].apply(lambda x: "{:,}".format(x).replace(',', ' ').replace('.', ','))
-        tooltips2_values = tooltips2_values.rename(columns={'aktualne_nemocnych': 'value_' + str(delay)})
+        tooltips2_values = tooltips2_values.merge(cdf['aktivni_pripady'].to_frame(), left_on='code', right_on='obec_kod')
+        tooltips2_values['aktivni_pripady'] = tooltips2_values['aktivni_pripady'].apply(lambda x: "{:,}".format(x).replace(',', ' ').replace('.', ','))
+        tooltips2_values = tooltips2_values.rename(columns={'aktivni_pripady': 'value_' + str(delay)})
     
     # table delay (prevalence)
     if delay < table_delay:
-        table_values = table_values.merge(cdf['aktualne_nemocnych'], left_on="code", right_on="obec_kod")
-        table_values = table_values.rename(columns={'aktualne_nemocnych': formatted_day2})
+        table_values = table_values.merge(cdf['aktivni_pripady'], left_on="code", right_on="obec_kod")
+        table_values = table_values.rename(columns={'aktivni_pripady': formatted_day2})
 
 
 
