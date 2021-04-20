@@ -177,13 +177,13 @@ table = table.mask(table < 0, 0)
 table_values = table_values.mask(table_values < 0, 0)
 # today, current prevalence
 data = data.merge(table_values[last_date_name2].to_frame(), left_on='code', right_on='code')
-data = data.rename(columns={last_date_name2: "covid+ dnes"})
-data['na 100 tis.'] = round(data['covid+ dnes'] / data['population'] * 100000).fillna(0).replace(np.inf, 0).apply(lambda x: int(x))
+data = data.rename(columns={last_date_name2: "prevalence"})
+data['/100 tis.'] = round(data['prevalence'] / data['population'] * 100000).fillna(0).replace(np.inf, 0).apply(lambda x: int(x))
 data = data.merge(table_values, left_on='code', right_on='code')
 # today, incidence
 data = data.merge(table[last_date_name].to_frame(), left_on='code', right_on='code')
-data = data.rename(columns={last_date_name: "nové týdně"})
-data['na 100tis.'] = round(data['nové týdně'] / data['population'] * 100000).fillna(0).replace(np.inf, 0).apply(lambda x: int(x))
+data = data.rename(columns={last_date_name: "incidence 7d"})
+data['/100tis.'] = round(data['incidence 7d'] / data['population'] * 100000).fillna(0).replace(np.inf, 0).apply(lambda x: int(x))
 data = data.merge(table, left_on='code', right_on='code')
 # renaming columns
 data = data.rename(columns={'population': 'počet obyv.', 'pretty_name': 'obec'})
