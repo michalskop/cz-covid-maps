@@ -20,8 +20,9 @@ last_date = last_day.isoformat()
 # locale.setlocale(locale.LC_ALL, 'cs_CZ.UTF-8')
 
 # read data from UZIS
-url = "https://share.uzis.cz/s/dCZBiARJ27ayeoS/download?path=%2F&files=obec.csv"
+# url = "https://share.uzis.cz/s/dCZBiARJ27ayeoS/download?path=%2F&files=obec.csv"
 url = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/obce.csv"
+# url = "/home/michal/Downloads/obce.csv"
 df = pd.read_csv(url, delimiter=",")
 
 # remove non existing Brdy and 999999
@@ -68,8 +69,8 @@ for i in range(0, (last_day - first_day).days + 1):
     # format column
     densities['density'] = densities['density'].apply(lambda x: "{:,}".format(x).replace(',', ' ').replace('.', ','))
     # rename column to date
-    formatted_day = f'{day.day}.{day.month}.'
-    formatted_day2 = f'{day.day}. {day.month}.'
+    formatted_day = f'{day.day}.{day.month}.{day.strftime("%y")}'
+    formatted_day2 = f'{day.day}. {day.month}. {day.strftime("%y")}'
     densities = densities.rename(columns={'density': formatted_day})
     last_date_name = formatted_day
     last_date_name2 = formatted_day2
