@@ -52,7 +52,7 @@ incidence['7 covid+'] = datai[isodates[-2]]
 incidence['7 na 100k'] = (datai[isodates[-2]] / datai['population_2021'] * 100000).round(1)
 incidence['dnes'] = incidence['7 na 100k']
 
-t = datai.iloc[:, 4:-1].div(datai['population_2021'], axis=0) * 100000
+t = (datai.iloc[:, 4:-1].div(datai['population_2021'], axis=0) * 100000).round(1)
 t.columns = dates[:-1]
 incidence = pd.concat([incidence, t], axis=1)
 
@@ -70,7 +70,7 @@ prevalence['7 covid+'] = datai[isodates[-2]]
 prevalence['7 na 100k'] = (datai[isodates[-2]] / datai['population_2021'] * 100000).round(1)
 prevalence['dnes'] = prevalence['aktuálně na 100k']
 
-t = datap.iloc[:, 4:-1].div(datap['population_2021'], axis=0) * 100000
+t = (datap.iloc[:, 4:-1].div(datap['population_2021'], axis=0) * 100000).round(1)
 t.columns = dates[:-1]
 prevalence = pd.concat([prevalence, t], axis=1)
 
