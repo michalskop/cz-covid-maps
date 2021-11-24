@@ -31,10 +31,10 @@ sprevalence.rename(columns={'': 'kód'}, inplace=True)
 
 # all dates
 isodates = sincidence.columns.tolist()[1:]
-# dates = []
-# for d in isodates:
-#     # This only works on Unix (Linux, OS X), not Windows (including Cygwin). On Windows, you would use #, e.g. %Y/%#m/%#d."
-#     dates.append(datetime.datetime.fromisoformat(d).strftime('%-d.%-m.%y'))
+dates = []
+for d in isodates:
+    # This only works on Unix (Linux, OS X), not Windows (including Cygwin). On Windows, you would use #, e.g. %Y/%#m/%#d."
+    dates.append(datetime.datetime.fromisoformat(d).strftime('%-d.%-m.%y'))
 
 # merge data + source
 datai = data.merge(sincidence, how='left', on='kód')
@@ -51,9 +51,11 @@ incidence['aktuálně na 100k'] = (datap[isodates[-2]] / datap['population_2021'
 incidence['7 covid+'] = datai[isodates[-2]]
 incidence['7 na 100k'] = (datai[isodates[-2]] / datai['population_2021'] * 100000).round(1)
 incidence['dnes'] = incidence['7 na 100k']
-for d in isodates[:-1]:
-    # This only works on Unix (Linux, OS X), not Windows (including Cygwin). On Windows, you would use #, e.g. %Y/%#m/%#d."
-    incidence[datetime.datetime.fromisoformat(d).strftime('%-d.%-m.%y')] = (datai[d] / datai['population_2021'] * 100000).round(1)
+
+t = datai.iloc[:, 4:-1].div(datai['population_2021'], axis=0) * 100000
+t.columns = dates[:-1]
+incidence = pd.concat([incidence, t], axis=1)
+
 incidence.to_csv(path + "incidence.csv", index=False, decimal=',')
 
 # prevalence
@@ -67,7 +69,9 @@ prevalence['aktuálně na 100k'] = (datap[isodates[-2]] / datap['population_2021
 prevalence['7 covid+'] = datai[isodates[-2]]
 prevalence['7 na 100k'] = (datai[isodates[-2]] / datai['population_2021'] * 100000).round(1)
 prevalence['dnes'] = prevalence['aktuálně na 100k']
-for d in isodates[:-1]:
-    # This only works on Unix (Linux, OS X), not Windows (including Cygwin). On Windows, you would use #, e.g. %Y/%#m/%#d."
-    prevalence[datetime.datetime.fromisoformat(d).strftime('%-d.%-m.%y')] = (datap[d] / datap['population_2021'] * 100000).round(1)
+
+t = datap.iloc[:, 4:-1].div(datap['population_2021'], axis=0) * 100000
+t.columns = dates[:-1]
+prevalence = pd.concat([prevalence, t], axis=1)
+
 prevalence.to_csv(path + "prevalence.csv", index=False, decimal=',')
