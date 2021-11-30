@@ -20,10 +20,10 @@ origin = pd.read_csv("kraje/origin.csv")
 # basics
 data = origin
 
-data['datum'] = f'{last_day.day}.{last_day.month}.'
+data['datum'] = f'{last_day.day}. {last_day.month}.'
 last_day_7 = last_day + datetime.timedelta(days=-7)
 last_date_7 = last_day_7.isoformat()
-data['datum-7'] = f'{last_day_7.day}.{last_day_7.month}.'
+data['datum-7'] = f'{last_day_7.day}. {last_day_7.month}.'
 
 # prepare empty
 data['dnes'] = 0
