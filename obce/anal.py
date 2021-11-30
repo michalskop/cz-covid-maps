@@ -67,7 +67,7 @@ pt_selected = pt_selected.merge(population, on='code')
 selected = pd.concat([pt_selected['code'], round(pt_selected.iloc[:, 1:-1].divide(pt_selected['počet obyv.'], axis=0).fillna(0) * 100000, 1)], axis=1)
 
 # merge
-pt_selected_last.columns = ['code', 'týdenní přírůstek na 100 tis. obyvatel']
+pt_selected_last.columns = ['code', 'počet']
 data = data.merge(pt_selected_last, on='code')
 
 data = data.merge(weekly, on='code', how='left')

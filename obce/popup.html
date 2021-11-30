@@ -1,0 +1,129 @@
+<table class="tg">
+  <thead>
+    <tr>
+      <th class="tg-ud0r" colspan="2">{{obec}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="first-row">
+      <td class="tg-bxri" colspan="2">vývoj za poslední rok:</td>
+    </tr>
+    <tr id="chart-row">
+      <td class="tg-2a7x chart" colspan="2">
+        <span class='bar' style='height: {{week_0}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_1}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_2}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_3}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_4}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_5}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_6}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_7}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_8}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_9}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_10}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_11}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_12}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_13}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_14}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_15}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_16}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_17}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_18}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_19}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_20}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_21}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_22}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_23}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_24}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_25}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_26}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_27}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_28}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_29}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_30}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_31}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_32}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_33}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_34}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_35}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_36}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_37}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_38}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_39}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_40}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_41}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_42}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_43}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_44}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_45}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_46}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_47}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_48}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_49}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_50}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_51}}%'>&nbsp;</span>
+        <span class='bar' style='height: {{week_52}}%'>&nbsp;</span>        
+      </td>
+    </tr>
+    <tr>
+      <td class="tg-bxri">osoby covid+</td>
+      <td class="tg-xy4n">aktuální počet</td>
+    </tr>
+    <tr>
+      <td class="tg-2a7x">ke dni {{datum}}</td>
+      <td class="tg-1nl4">{{počet}}</td>
+    </tr>
+    <tr>
+      <td class="tg-2a7x">aktuálně na 100 tis.</td>
+      <td class="tg-1nl4">{{dnes}}</td>
+    </tr>
+    <tr>
+      <td class="tg-2a7x">počet obyv.</td>
+      <td class="tg-1nl4">{{počet obyv.}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<style type="text/css">
+  .bar {
+    /* width: 0; */
+    display: inline-block;
+    vertical-align: bottom;
+    width: 1.8867%;
+    /* height: 14px; */
+    background-color: #a05d5d;
+  }
+
+  .chart {
+    height: 20px;
+    font-size: 0!important;
+    padding-top: 5px!important;
+    padding-bottom: 1px!important;
+  }
+
+  #chart-row {
+    border-bottom:#eee solid 2px;
+    border-top: 0!important;
+  }
+
+  #first-row {
+    font-weight: bold;
+  }
+
+
+  .tg  {border-collapse:collapse;border-color:#93a1a1;border-spacing:0;}
+  .tg td{background-color:#fdf6e3;border-color:#93a1a1;border-style:solid;border-width:0px;color:#002b36;
+    font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:4px 4px;word-break:normal;}
+  .tg th{background-color:#657b83;border-color:#93a1a1;border-style:solid;border-width:0px;color:#fdf6e3;
+    font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:4px 4px;word-break:normal;}
+  .tg .tg-bxri{background-color:#fdeaea;border-color:#f6c4c4;color:#a05d5d;font-family:Tahoma, Geneva, sans-serif !important;;
+    font-size:12px;font-weight:bold;text-align:left;vertical-align:top}
+  .tg .tg-2a7x{background-color:#fdeaea;border-color:#f6c4c4;color:#a05d5d;font-family:Tahoma, Geneva, sans-serif !important;;
+    font-size:12px;text-align:left;vertical-align:top}
+  .tg .tg-ud0r{background-color:#a05d5d;border-color:#000000;color:#fdeaea;font-family:Tahoma, Geneva, sans-serif !important;;
+    font-size:15px;font-weight:bold;text-align:center;vertical-align:middle}
+  .tg .tg-xy4n{background-color:#fdeaea;border-color:#f6c4c4;color:#a05d5d;font-family:Tahoma, Geneva, sans-serif !important;;
+    font-size:12px;font-weight:bold;text-align:right;vertical-align:top}
+  .tg .tg-1nl4{background-color:#fdeaea;border-color:#f6c4c4;color:#a05d5d;font-family:Tahoma, Geneva, sans-serif !important;;
+    font-size:12px;text-align:right;vertical-align:top}
+</style>
