@@ -92,4 +92,4 @@ data2['dnes'] = data2.iloc[:, -1]
 
 # save
 data.to_csv('obce/incidence7.csv', index=False)
-data.to_csv('obce/prevalence.csv', index=False)
+data2.to_csv('obce/prevalence.csv', index=False)
