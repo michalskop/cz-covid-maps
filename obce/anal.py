@@ -1,4 +1,4 @@
-"""Prepare data from UZIS for maps and table."""
+"""Prepare data from UZIS for maps and table - obce."""
 
 import datetime
 from os import replace
@@ -35,7 +35,7 @@ data['datum'] = f'{last_day.day}. {last_day.month}.'
 # data2['datum'] = f'{first_day.day}. {first_day.month}.'
 
 # prepare empty
-data['týdenní přírůstek na 100 tis. obyvatel'] = 0
+data['dnes'] = 0
 
 # data2['value'] = 0
 # data2['aktuálně nemocných na 100 tis. obyvatel'] = 0
@@ -67,14 +67,14 @@ pt_selected = pt_selected.merge(population, on='code')
 selected = pd.concat([pt_selected['code'], round(pt_selected.iloc[:, 1:-1].divide(pt_selected['počet obyv.'], axis=0).fillna(0) * 100000, 1)], axis=1)
 
 # merge
-pt_selected_last.columns = ['code', 'dnes']
+pt_selected_last.columns = ['code', 'týdenní přírůstek na 100 tis. obyvatel']
 data = data.merge(pt_selected_last, on='code')
 
 data = data.merge(weekly, on='code', how='left')
 data = data.merge(selected, on='code', how='left')
 
 # add today values
-data['týdenní přírůstek na 100 tis. obyvatel'] = data.iloc[:, -1]
+data['dnes'] = data.iloc[:, -1]
 
 # save
 data.to_csv('obce/incidence7.csv', index=False)
