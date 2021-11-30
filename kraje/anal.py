@@ -1,8 +1,7 @@
 """Prepare data from UZIS for maps."""
 
-import csv
 import datetime
-import numpy as np
+# import numpy as np
 import pandas as pd
 
 # last date
