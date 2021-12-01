@@ -58,7 +58,7 @@ t.columns = dates[:-1]
 incidence = pd.concat([incidence, t], axis=1)
 
 
-locale.setlocale(locale.LC_ALL, 'cs_CZ')
+locale.setlocale(locale.LC_ALL, 'cs_CZ.UTF-8')
 incidence.sort_values(by=['obec'], inplace=True)
 incidence.to_csv(path + "incidence.csv", index=False, decimal=',')
 
