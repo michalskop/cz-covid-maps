@@ -29,6 +29,7 @@ origin = pd.read_csv("obce/origin.csv")
 data = copy.deepcopy(origin)
 data2 = copy.deepcopy(origin)
 
+
 data['datum'] = f'{last_day.day}. {last_day.month}.'
 data2['datum'] = f'{first_day.day}. {first_day.month}.'
 
@@ -70,6 +71,7 @@ population['počet obyv.'] = population['počet obyv.'].str.replace(' ','').asty
 pt_selected = pt_selected.merge(population, on='code')
 pt2_selected = pt2_selected.merge(population, on='code')
 
+# last year with code
 selected = pd.concat([pt_selected['code'], round(pt_selected.iloc[:, 1:-1].divide(pt_selected['počet obyv.'], axis=0).fillna(0) * 100000, 1)], axis=1)
 selected2 = pd.concat([pt2_selected['code'], round(pt2_selected.iloc[:, 1:-1].divide(pt2_selected['počet obyv.'], axis=0).fillna(0) * 100000, 1)], axis=1)
 
@@ -93,3 +95,41 @@ data2['dnes'] = data2.iloc[:, -1]
 # save
 data.to_csv('obce/incidence7.csv', index=False)
 data2.to_csv('obce/prevalence.csv', index=False)
+
+# table
+data3 = copy.deepcopy(origin)
+
+del data3["geometry"]
+
+# table prevalence
+data3['počet obyv.'] = data3['počet obyv.'].str.replace(' ','').astype(int)
+data3 = data3.merge(pt2_selected_last, on='code')
+data3.rename(columns={'počet': 'prevalence'}, inplace=True)
+
+selected2_last = selected2.iloc[:, [0, -1]].apply(round).astype(int)
+selected2_last.columns = ['code', '/100 tis.']
+data3 = data3.merge(selected2_last, on='code')
+
+t = selected2.iloc[:, -15:]
+t = pd.concat([t, selected2.iloc[:, 0]], axis=1)
+t.columns = [(lambda x: x.replace(".", ". "))(x) for x in t.columns]
+data3 = data3.merge(t, on='code')
+
+# table incidence
+data3 = data3.merge(pt_selected_last, on='code')
+data3.rename(columns={'počet': 'incidence 7d'}, inplace=True)
+
+data3 = data3.merge(selected.iloc[:, [0, -1]].apply(round).astype(int), on='code')
+c = data3.columns.tolist()
+c[-1] = '/100tis.'
+data3.columns = c
+
+table_weekly_dates = [d for d in all_dates if datetime.datetime.fromisoformat(d).weekday() == last_day.weekday()]
+
+pt_table_weekly = pt[table_weekly_dates]
+pt_table_weekly.columns = [(lambda x: datetime.datetime.fromisoformat(x).strftime('%-d.%-m.%y'))(x) for x in table_weekly_dates]
+pt_table_weekly = pt_table_weekly.reset_index().rename(columns={'obec_kod': 'code'})
+
+data3 = data3.merge(pt_table_weekly, on='code')
+
+data3.to_csv('obce/table.csv', index=False)
