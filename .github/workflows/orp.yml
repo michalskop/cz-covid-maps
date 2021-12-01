@@ -13,7 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: install locale
-      run: sudo locale-gen cs_CZ.UTF-8
+      run: |-
+        sudo apt-get install -y locales
+        sudo locale-gen cs_CZ.UTF-8
     - name: Check out repo
       uses: actions/checkout@v2
     - name: Set up Python
