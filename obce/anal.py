@@ -44,9 +44,9 @@ pt2 = pd.pivot_table(df, index='obec_kod', columns='datum', values='aktivni_prip
 
 # change dates names, prepare values
 all_dates = pt.columns[1:]
-# selected_dates = [d for (i, d) in all_dates if d >= first_date and d <= last_date]
-selected_dates = [d for i, d in enumerate(all_dates) if (d >= first_date and d <= last_date) and (((last_day - datetime.date.fromisoformat(d)).days <= 30) or ((last_day - datetime.date.fromisoformat(d)).days % 2 == 1))] # only last 30 days and odd days
-weekly_dates = [d for d in selected_dates if datetime.datetime.fromisoformat(d).weekday() == last_day.weekday()]
+selected_dates0 = [d for d in all_dates if d >= first_date and d <= last_date]
+selected_dates = [d for d in all_dates if (d >= first_date and d <= last_date) and (((last_day - datetime.date.fromisoformat(d)).days <= 30) or ((last_day - datetime.date.fromisoformat(d)).days % 2 == 1))] # only last 30 days and odd days
+weekly_dates = [d for d in selected_dates0 if datetime.datetime.fromisoformat(d).weekday() == last_day.weekday()]
 
 pt_selected = pt[selected_dates]
 pt_weekly = pt[weekly_dates]
