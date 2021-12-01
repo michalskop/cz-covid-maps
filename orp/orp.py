@@ -4,7 +4,8 @@
 # https://app.flourish.studio/visualisation/7917809/
 
 import datetime
-import numpy as np
+import locale
+# import numpy as np
 import pandas as pd
 
 # resolve path
@@ -56,6 +57,9 @@ t = (datai.iloc[:, 4:-1].div(datai['population_2021'], axis=0) * 100000).round(1
 t.columns = dates[:-1]
 incidence = pd.concat([incidence, t], axis=1)
 
+
+locale.setlocale(locale.LC_ALL, 'cs_CZ')
+incidence.sort_values(by=['obec'], inplace=True)
 incidence.to_csv(path + "incidence.csv", index=False, decimal=',')
 
 # prevalence
@@ -74,4 +78,5 @@ t = (datap.iloc[:, 4:-1].div(datap['population_2021'], axis=0) * 100000).round(1
 t.columns = dates[:-1]
 prevalence = pd.concat([prevalence, t], axis=1)
 
+prevalence.sort_values(by=['obec'], inplace=True)
 prevalence.to_csv(path + "prevalence.csv", index=False, decimal=',')
