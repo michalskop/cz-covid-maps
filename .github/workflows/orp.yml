@@ -12,6 +12,8 @@ jobs:
   scheduled:
     runs-on: ubuntu-latest
     steps:
+    - name: install locale
+      run: locale-gen cs_CZ
     - name: Check out repo
       uses: actions/checkout@v2
     - name: Set up Python
