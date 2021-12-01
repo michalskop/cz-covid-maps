@@ -3,6 +3,7 @@
 import copy
 import datetime
 import pandas as pd
+import numpy as np
 
 # read data from UZIS
 url = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/obce.csv"
@@ -43,7 +44,8 @@ pt2 = pd.pivot_table(df, index='obec_kod', columns='datum', values='aktivni_prip
 
 # change dates names, prepare values
 all_dates = pt.columns[1:]
-selected_dates = [d for d in all_dates if d >= first_date and d <= last_date]
+# selected_dates = [d for (i, d) in all_dates if d >= first_date and d <= last_date]
+selected_dates = [d for i, d in enumerate(all_dates) if (d >= first_date and d <= last_date) and (((last_day - datetime.date.fromisoformat(d)).days <= 30) or ((last_day - datetime.date.fromisoformat(d)).days % 2 == 1))] # only last 30 days and odd days
 weekly_dates = [d for d in selected_dates if datetime.datetime.fromisoformat(d).weekday() == last_day.weekday()]
 
 pt_selected = pt[selected_dates]
@@ -62,8 +64,8 @@ pt2_weekly.columns = [(lambda x: ("week_" + str(x)))(x) for x in range(0, len(we
 pt_selected_last = pt_selected.iloc[:, [0, -1]]
 pt2_selected_last = pt2_selected.iloc[:, [0, -1]]
 
-weekly = (pt_weekly.divide(pt_weekly.max(axis=1), axis=0) * 100).reset_index().rename(columns={'obec_kod': 'code'})
-weekly2 = (pt2_weekly.divide(pt2_weekly.max(axis=1), axis=0) * 100).reset_index().rename(columns={'obec_kod': 'code'})
+weekly = (round(pt_weekly.divide(pt_weekly.max(axis=1), axis=0) * 100).fillna(0).astype(int)).reset_index().rename(columns={'obec_kod': 'code'})
+weekly2 = (round(pt2_weekly.divide(pt2_weekly.max(axis=1), axis=0) * 100).fillna(0).astype(int)).reset_index().rename(columns={'obec_kod': 'code'})
 
 population = origin.sort_values(by=['code'])[['code', 'počet obyv.']]
 population['počet obyv.'] = population['počet obyv.'].str.replace(' ','').astype(int)
@@ -91,6 +93,16 @@ data2 = data2.merge(selected2, on='code', how='left')
 # add today values
 data['dnes'] = data.iloc[:, -1]
 data2['dnes'] = data2.iloc[:, -1]
+
+# vojenske ujezdy
+vu_index = data[data['code'].isin(vu_codes)].index
+data.loc[vu_index, 'dnes'] = np.nan
+data2.loc[vu_index, 'dnes'] = np.nan
+data.loc[vu_index, 'počet'] = np.nan
+data2.loc[vu_index, 'počet'] = np.nan
+for s in selected.columns[1:]:
+    data.loc[vu_index, s] = np.nan
+    data2.loc[vu_index, s] = np.nan
 
 # save
 data.to_csv('obce/incidence7.csv', index=False)
@@ -132,4 +144,11 @@ pt_table_weekly = pt_table_weekly.reset_index().rename(columns={'obec_kod': 'cod
 
 data3 = data3.merge(pt_table_weekly, on='code')
 
+data3.sort_values(by=['počet obyv.'], ascending=[False], inplace=True)
+
+# vojenske ujezdy
+vu_index = data3[data3['code'].isin(vu_codes)].index
+data3.drop(vu_index, inplace=True)
+
+# save table
 data3.to_csv('obce/table.csv', index=False)
