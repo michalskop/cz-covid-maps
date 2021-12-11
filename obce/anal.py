@@ -104,9 +104,16 @@ for s in selected.columns[1:]:
     data.loc[vu_index, s] = np.nan
     data2.loc[vu_index, s] = np.nan
 
+data['počet'] = data['počet'].astype(str).apply(lambda x: x.replace('.0',''))
+data2['počet'] = data2['počet'].astype(str).apply(lambda x: x.replace('.0',''))
+
 # save
 data.to_csv('obce/incidence7.csv', index=False)
 data2.to_csv('obce/prevalence.csv', index=False)
+
+# get back to float
+data['počet'].astype(float)
+data2['počet'].astype(float)
 
 # table
 data3 = copy.deepcopy(origin)
