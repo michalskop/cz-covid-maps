@@ -164,6 +164,7 @@ del out['code']
 pto_chart_real = pd.pivot_table(pto_selected, index='code', values=pt_chart_real_levels, columns='age_group')
 pto_chart_real.columns = pto_chart_real.columns.get_level_values(0) + '_' +  pto_chart_real.columns.get_level_values(1)
 pto_chart_real.reset_index(inplace=True)
+pto_chart_real = pto_chart_real.astype(int)
 
 min_dist = 10
 
@@ -191,6 +192,7 @@ if selected_days[-1].strftime('%Y-%m-%d') != today.strftime('%Y-%m-%d'):
     selected_days.append(today)
 for until_day in selected_days:
     until_date = until_day.strftime('%Y-%m-%d')
+    print(until_date) # progress bar
     null_day = until_day - datetime.timedelta(days=null_after_days)
     null_date = null_day.strftime("%Y-%m-%d")
 
@@ -198,11 +200,24 @@ for until_day in selected_days:
     for g in groups:
         pto[g] = data[(data['datum'] > null_date) & (data['datum'] <= until_date)].pivot_table(index=["orp_bydliste_kod", 'age_group', g], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
 
+    levelone = pto['first_others'][pto['first_others']['first_others']]['id'] - pto['second_others'][pto['second_others']['second_others']]['id']
+
+    empty_column = levelone.copy()
+    empty_column[:] = 0
     level = [0] * 4
 
     level[3] = pto['third_others'][pto['third_others']['third_others']]['id'] + pto['third_janssen'][pto['third_janssen']['third_janssen']]['id'] + pto['second_janssen'][pto['second_janssen']['second_janssen']]['id']
+    level[3].fillna(0, inplace=True)
+    if len(level[3]) == 0:  # no third level
+        level[3] = empty_column
     level[2] = (pto['second_others'][pto['second_others']['second_others']]['id'] + pto['first_janssen'][pto['first_janssen']['first_janssen']]['id'] - level[3]).apply(lambda x: max(x, 0))
-    level[1] = (pto['first_others'][pto['first_others']['first_others']]['id'] - pto['second_others'][pto['second_others']['second_others']]['id']).apply(lambda x: max(x, 0))
+    level[2].fillna(0, inplace=True)
+    if len(level[2]) == 0:  # no second level
+        level[2] = empty_column
+    level[1] = (levelone).apply(lambda x: max(x, 0))
+    level[1].fillna(0, inplace=True)
+    if len(level[1]) == 0:  # no first level
+        level[1] = empty_column
     level_one_plus = level[3] + level[2] + level[1]
     level_two_plus = level[3] + level[2]
     level[0] = pto['first_others'][pto['first_others']['first_others']]['value'] - level_one_plus
@@ -214,310 +229,45 @@ for until_day in selected_days:
     for i in range(0, 4):
         pto_selected['level_' + str(i)] = level[i].to_frame()
 
+    # break
+
     totals = pd.pivot_table(pto_selected, index='code', values=['level_two_plus', 'value'], aggfunc=np.sum)
     totals[until_day.strftime('%-d.%-m.%y')] = round(totals['level_two_plus'] / totals['value'] * 100, 1)
     totals = totals.reset_index()
-    totals
     out = out.merge(totals.loc[:, [until_day.strftime('%-d.%-m.%y'), 'code']], how='left', left_on='kód', right_on='code')
     del out['code']
     out[until_day.strftime('%-d.%-m.%y')].fillna(0, inplace=True)
 
+    # break
 
-out.to_csv(path + 'orp.csv')
+out.to_csv(path + 'orp.csv', index=False)
 
 
 
 # generate html for chart tooltip
-li = "<li><span class='party-bar' style='display: inline-block; background-color: #5021AB; width: {{chart_level_3_XXX}}%'><span class='party-desc'>{{chart_level_3_XXX_desc}}&nbsp;</span></span><span class='party-bar' style='display: inline-block; background-color: #63698C; width: {{chart_level_2_XXX}}%'><span class='party-desc'>{{chart_level_2_XXX_desc}}&nbsp;</span></span><span class='party-bar' style='display: inline-block; background-color: #76B7CE; width: {{chart_level_1_XXX}}%'><span  class='party-desc'>{{chart_level_1_XXX_desc}}&nbsp;</span></span><span class='party-bar' style='display: inline-block; background-color: #e2626d; width: {{chart_level_0_XXX}}%'><span  class='party-desc'>&nbsp;</span></span>&nbsp;<span class='party-name'>XXX</span></li>"
+li = "<li><span class='party-bar level-3' style='width: {{chart_level_3_XXX}}%'><span class='party-desc'>{{chart_level_3_XXX_desc}}&nbsp;</span></span><span class='party-bar level-2' style='width: {{chart_level_2_XXX}}%'><span class='party-desc'>{{chart_level_2_XXX_desc}}&nbsp;</span></span><span class='party-bar level-1' style='width: {{chart_level_1_XXX}}%'><span class='party-desc'>{{chart_level_1_XXX_desc}}&nbsp;</span></span><span class='party-bar level-0' style='width: {{chart_level_0_XXX}}%'><span  class='party-desc'>&nbsp;</span></span>&nbsp;<span class='party-name'>XXX</span></li>"
 tooltip = ''
 for k in reversed(population_labels):
     tooltip += li.replace('XXX', k)
     tooltip += "\n"
 print(tooltip)
 
+# level-0 {
+#   background-color: #e2626d;
+# }
+# level-1 {
+#   background-color: #76B7CE;
+# }
+# level-2 {
+#   background-color: #63698C;
+# }
+# level-3 {
+#   background-color: #5021AB;
+# }
+
+
+
+ 
+
+
 style = ".party-desc {color: #eee; font-size: 0.9em; font-weight: bold; position: relative; bottom: 1px; float: right}"
-
-
-
-
-type(pto_selected)
-
-pto_first_others = data[data['datum'] > null_date].pivot_table(index=["orp_bydliste_kod", 'age_group', 'first_others'], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-pto_first_others = data[data['datum'] > null_date].pivot_table(index=["orp_bydliste_kod", 'age_group', 'first_others'], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-pto_db = data[data['datum'] > null_date].pivot_table(index=["orp_bydliste_kod", 'age_group', 'booster', 'full', 'first_only'], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-pto_db = data[data['datum'] > null_date].pivot_table(index=["orp_bydliste_kod", 'age_group', 'first_others', 'second_others', 'third_others', 'first_janssen', 'second_janssen', 'third_janssen'], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-
-
-pto_db = data[data['datum'] > null_date].pivot_table(index=["orp_bydliste_kod", 'age_group', 'final_vaccine', 'booster'], values='id', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-pto_db['rate'] = pto_db['id'] / pto_db['value']
-
-pto_db = pto_db[~(pto_db['age_group'] == 'nezařazeno')].reset_index()
-
-pto_db['vaccine'] = 1 + pto_db['final_vaccine'].astype(int) + pto_db['booster'].astype(int).apply(lambda x: 2 * x)
-
-pto = pto_db[pto_db['vaccine'] != 4].rename(columns={'id': 'n'}).pivot_table(index='orp_bydliste_kod', columns=['vaccine', 'age_group'], values=['rate'])
-
-first = pto.loc[:, (slice(None), 2)].loc[:, ('rate', 2)] - pto.loc[:, (slice(None), 1)].loc[:, ('rate', 1)]
-first.mask(first < 0, 0, inplace=True)
-
-pto.loc[:, (slice(None), 1)].loc[:, ('rate', 1)] 
-
-pto.columns = pto.columns.to_flat_index().str.join('_')
-
-pto.to_csv('orp_age_rates_n.csv')
-
-# current data by orp and "at least one" and age
-# Počty a podíl - orp x věk.sk
-pto1_db = data.pivot_table(index=["orp_bydliste_kod", 'age_group', 'poradi_davky'], values='pohlavi', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-pto1_db['rate'] = pto1_db['pohlavi'] / pto1_db['value'] * 100
-
-pto1_db = pto1_db[~(pto1_db['age_group'] == 'nezařazeno')].reset_index()
-
-pto1 = pto1_db.rename(columns={'pohlavi': 'n'}).pivot_table(index='orp_bydliste_kod', columns=['poradi_davky', 'age_group'], values=['rate', 'n'])
-
-# pto1.columns = pto1.columns.to_flat_index().str.join('_') # doesn't work, because 1 and 2 are integeres. not strings
-# quick hack:
-# pto1.columns = pto.columns
-# https://stackoverflow.com/a/7687615/1666623
-pto1.columns = [(x[0], str(x[1]), x[2])for x in pto1.columns]
-pto1.columns = pto1.columns.to_flat_index().str.join('_')
-
-pto1.to_csv('orp_age_rates_n1.csv')
-
-ws = sh.worksheet('Počty a podíl - orp x věk.sk.')
-# ws.update('B1', [pto1.columns.tolist()]) # not changing
-ws.update('C2', pto1.replace(np.nan, 0).values.tolist())
-
-
-# at least once x week x region
-ptr_db = data[data['poradi_davky'] == 1].pivot_table(index=['region_code', 'week'], values='pohlavi', aggfunc='count').reset_index().merge(population_ptr, how='left', left_on=['region_code'], right_on=['region_code'])
-
-ptr_db_cum = ptr_db.groupby(by=['region_code', 'week']).sum().groupby(level=[0])['pohlavi'].cumsum().reset_index().merge(ptr_db.loc[:, ['region_code', 'week', 'value']], how='left', left_on=['region_code', 'week'], right_on=['region_code', 'week'])
-ptr_db_cum['rate'] = ptr_db_cum['pohlavi'] / ptr_db_cum['value']
-ptr_db_cum['rate100'] = ptr_db_cum['pohlavi'] / ptr_db_cum['value'] * 100
-
-ptr_db_cum.pivot_table(index='region_code', columns='week', values=['rate']).reset_index().to_csv('region_week_first.csv')
-
-
-# at least once x date x region
-# Počty - kraj x den | první
-# Podíl - kraj x kumul. x den | první
-ptrd_db = data[data['poradi_davky'] == 1].pivot_table(index=['region_code', 'datum'], values='pohlavi', aggfunc='count', dropna=False).reset_index().merge(population_ptr, how='left', left_on=['region_code'], right_on=['region_code'])
-
-ptrd = data[data['poradi_davky'] == 1].pivot_table(index=['region_code'], columns=['datum'], values='pohlavi', aggfunc='count', dropna=False).reset_index()
-
-ptrd.to_csv('region_date_first_n.csv')
-
-ws = sh.worksheet('Počty - kraj x den | první')
-ws.update('B1', [ptrd.columns.tolist()])
-ws.update('B2', ptrd.replace(np.nan, '').values.tolist())
-
-
-ptrd_db_cum = ptrd_db.groupby(by=['region_code', 'datum']).sum().groupby(level=[0])['pohlavi'].cumsum().reset_index().merge(ptrd_db.loc[:, ['region_code', 'datum', 'value']], how='left', left_on=['region_code', 'datum'], right_on=['region_code', 'datum'])
-ptrd_db_cum['rate'] = ptrd_db_cum['pohlavi'] / ptrd_db_cum['value']
-ptrd_db_cum['rate100'] = ptrd_db_cum['pohlavi'] / ptrd_db_cum['value'] * 100
-
-ptrd_db_cum_out = ptrd_db_cum.pivot_table(index='region_code', columns='datum', values=['rate100']).reset_index()
-ptrd_db_cum_out.to_csv('region_date_first.csv')
-
-ws = sh.worksheet('Podíl - kraj x kumul. x den | první')
-dates_out = [[x[1] for x in ptrd_db_cum_out.columns.tolist()]]
-dates_out[0][0] = 'region_code'
-ws.update('A1', dates_out)
-ws.update('A2', ptrd_db_cum_out.replace(np.nan, 0).values.tolist())
-
-
-
-# finished x week x region
-pts_db = data[data['final_vaccine'] == '1'].pivot_table(index=['region_code', 'week'], values='pohlavi', aggfunc='count').reset_index().merge(population_ptr, how='left', left_on=['region_code'], right_on=['region_code'])
-
-pts_db_cum = pts_db.groupby(by=['region_code', 'week']).sum().groupby(level=[0])['pohlavi'].cumsum().reset_index().merge(pts_db.loc[:, ['region_code', 'week', 'value']], how='left', left_on=['region_code', 'week'], right_on=['region_code', 'week'])
-pts_db_cum['rate'] = pts_db_cum['pohlavi'] / pts_db_cum['value']
-
-pts_db_cum.pivot_table(index='region_code', columns='week', values=['rate']).reset_index().to_csv('region_week_finished.csv')
-
-
-# at least once (=1st vaccine) x orp x date - cummulative
-# Počty - orp x den | první
-# Podíl - orp x kumul. x den | první
-ptso_db = data[data['poradi_davky'] == 1].pivot_table(index=['orp_bydliste_kod', 'datum'], values='pohlavi', aggfunc='count').reset_index().merge(population_pto_all, how='left', left_on=['orp_bydliste_kod'], right_on=['code'])
-
-ptso = data[data['poradi_davky'] == 1].pivot_table(index=['orp_bydliste_kod'], columns=['datum'], values='pohlavi', aggfunc='count', dropna=False).reset_index()
-ptso.to_csv('orp_date_first_n.csv')
-
-ws = sh.worksheet('Počty - orp x den | první')
-ws.update('B1', [ptso.columns.tolist()])
-ws.update('B2', ptso.replace(np.nan, 0.0).values.tolist())
-
-
-ptso_db_cum = ptso_db.groupby(by=['code', 'datum']).sum().groupby(level=[0])['pohlavi'].cumsum().reset_index().merge(ptso_db.loc[:, ['code', 'datum', 'value']], how='left', left_on=['code', 'datum'], right_on=['code', 'datum'])
-
-ptso_db_cum['rate'] = ptso_db_cum['pohlavi'] / ptso_db_cum['value']
-ptso_db_cum['rate100'] = ptso_db_cum['pohlavi'] / ptso_db_cum['value'] * 100
-
-ptso_out = ptso_db_cum.pivot_table(index='code', columns='datum', values=['rate100']).reset_index()
-
-ptso_out.columns = ptso_out.columns.to_flat_index().str.join('').str.replace('rate100','')
-
-ptso_out.iloc[:, 1] = ptso_out.iloc[:, 1].fillna(0)
-
-for d in range(2, len(ptso_out.columns)):
-    ptso_out.iloc[:, d].fillna(ptso_out.iloc[:, (d - 1)], inplace=True)
-
-ptso_out.to_csv('orp_date_first.csv')
-
-ws = sh.worksheet('Podíl - orp x kumul. x den | první')
-ws.update('A1', [ptso_out.columns.tolist()])
-ws.update('A2', ptso_out.replace(np.nan, 0).values.tolist())
-
-
-# for chart: orp x fully vaccinated/partly/none
-# Bar Chart - orp x věk.sk.
-population_groups = population_labels
-pto_chart = pto_db.pivot_table(index=["orp_bydliste_kod"], columns=['age_group', 'final_vaccine'], values=['pohlavi', 'value'])
-
-pto_chart = pto_chart.fillna(0)
-
-pto_chart.columns = pto_chart.columns.to_flat_index().str.join('_')
-
-# pto_db[pto_db['orp_bydliste_kod'] == 8022]
-# pto_chart['value_0-17_1']
-
-bar = 75
-
-pto_chart_out = pd.DataFrame(index=pto_chart.index)
-for k in population_groups:
-    pto_chart_out[k + '_fully_vaccinated'] = pto_chart['pohlavi_' + k + '_1'] / pto_chart['value_' + k + '_1'] * bar
-    pto_chart_out[k + '_partly_vaccinated'] = (pto_chart['pohlavi_' + k + '_0'] - pto_chart['pohlavi_' + k + '_1']) / pto_chart['value_' + k + '_1'] * bar
-    pto_chart_out[k + '_no_vaccinated'] = (pto_chart['value_' + k + '_1'] - pto_chart['pohlavi_' + k + '_0']) / pto_chart['value_' + k + '_1'] * bar
-
-pto_chart_out.reset_index().to_csv("orp_bar_chart_values.csv")
-
-ws = sh.worksheet('Bar Chart - orp x věk.sk.')
-ws.update('B2', pto_chart_out.replace(np.nan, 0).values.tolist())
-
-bar = 100
-min_dist = 10
-
-pto_chart_desc = pd.DataFrame(index=pto_chart.index)
-for k in population_groups:
-    pto_chart_desc[k + '_fully_vaccinated_desc'] = round(pto_chart['pohlavi_' + k + '_1'] / pto_chart['value_' + k + '_1'] * bar)
-    pto_chart_desc[k + '_partly_vaccinated_desc'] = round(pto_chart['pohlavi_' + k + '_0'] / pto_chart['value_' + k + '_1'] * bar)
-
-pto_chart_desc[pto_chart_desc < min_dist] = np.NaN
-for k in population_groups:
-    pto_chart_desc[k + '_fully_vaccinated_desc'][pto_chart_desc[k + '_partly_vaccinated_desc'] - pto_chart_desc[k + '_fully_vaccinated_desc'] < min_dist] = np.NaN
-
-pto_chart_desc.reset_index().to_csv("orp_bar_chart_descriptions.csv")
-
-ws = sh.worksheet('Bar Chart desc - orp x věk.sk.')
-ws.update('B2', pto_chart_desc.replace(np.nan, '').values.tolist())
-
-# for chart: region x fully vaccinated/partly/none
-# Bar Chart - kraj x věk.sk.
-# Bar Chart desc - kraj x věk.sk.
-pt_chart = pt_db.pivot_table(index=["region_code"], columns=['age_group', 'final_vaccine'], values=['pohlavi', 'value'])
-
-pt_chart = pt_chart.fillna(0)
-
-pt_chart.columns = pt_chart.columns.to_flat_index().str.join('_')
-
-
-bar = 75
-
-pt_chart_out = pd.DataFrame(index=pt_chart.index)
-for k in population_groups:
-    pt_chart_out[k + '_fully_vaccinated'] = pt_chart['pohlavi_' + k + '_1'] / pt_chart['value_' + k + '_1'] * bar
-    pt_chart_out[k + '_partly_vaccinated'] = (pt_chart['pohlavi_' + k + '_0'] - pt_chart['pohlavi_' + k + '_1']) / pt_chart['value_' + k + '_1'] * bar
-    pt_chart_out[k + '_no_vaccinated'] = (pt_chart['value_' + k + '_1'] - pt_chart['pohlavi_' + k + '_0']) / pt_chart['value_' + k + '_1'] * bar
-
-pt_chart_out.reset_index().to_csv("region_bar_chart_values.csv")
-
-ws = sh.worksheet('Bar Chart - kraj x věk.sk.')
-ws.update('B2', pt_chart_out.replace(np.nan, 0).values.tolist())
-
-bar = 100
-min_dist = 10
-
-pt_chart_desc = pd.DataFrame(index=pt_chart.index)
-for k in population_groups:
-    pt_chart_desc[k + '_fully_vaccinated_desc'] = round(pt_chart['pohlavi_' + k + '_1'] / pt_chart['value_' + k + '_1'] * bar)
-    pt_chart_desc[k + '_partly_vaccinated_desc'] = round(pt_chart['pohlavi_' + k + '_0'] / pt_chart['value_' + k + '_1'] * bar)
-
-pt_chart_desc[pt_chart_desc < min_dist] = np.NaN
-for k in population_groups:
-    pt_chart_desc[k + '_fully_vaccinated_desc'][pt_chart_desc[k + '_partly_vaccinated_desc'] - pt_chart_desc[k + '_fully_vaccinated_desc'] < min_dist] = np.NaN
-
-pt_chart_desc.reset_index().to_csv("region_bar_chart_descriptions.csv")
-
-ws = sh.worksheet('Bar Chart desc - kraj x věk.sk.')
-ws.update('B2', pt_chart_desc.replace(np.nan, '').values.tolist())
-
-
-# generate html for chart tooltip
-li = "<li><span class='party-bar' style='display: inline-block; background-color: #63698C; width: {{XXX_fully_vaccinated}}%'><span class='party-desc'>{{XXX_fully_vaccinated_desc}}&nbsp;</span></span><span class='party-bar' style='display: inline-block; background-color: #76B7CE; width: {{XXX_partly_vaccinated}}%'><span  class='party-desc'>{{XXX_partly_vaccinated_desc}}&nbsp;</span></span><span class='party-bar' style='display: inline-block; background-color: #DBACAC; width: {{XXX_no_vaccinated}}%'></span>&nbsp;<span class='party-name'>XXX</span></li>"
-tooltip = ''
-for k in reversed(population_groups):
-    tooltip += li.replace('XXX', k)
-    tooltip += "\n"
-print(tooltip)
-
-style = ".party-desc = {color: #eee; font-size: 0.9em; font-weight: bold; position: relative; bottom: 1px; float: right}"
-
-######
-# data.pivot_table(index="orp_bydliste_kod", columns=['vekova_skupina'], values=['pohlavi'], aggfunc='count').to_csv("basic_overview.csv")
-
-# data.pivot_table(index="orp_bydliste_kod", columns=['datum'], values=['pohlavi'], aggfunc='count').to_csv("pt_date.csv")
-
-# data[data['week'] == '2021-53']
-
-# data['datum'].max()
-
-# data['vakcina'].unique()
-# data['vakcina_kod'].unique()
-# data['vekova_skupina'].unique()
-
-# data[data['vakcina'] == 'COVID-19 Vaccine Janssen'].pivot_table(index='kraj_nazev', columns=['datum'], values=['pohlavi'], aggfunc='count')
-
-# round(data['orp_bydliste_kod'] / 100)
-
-# data[1:5]
-
-# data['datum'].apply(datetime.datetime.fromisoformat).dt.month.map("{:02}".format)
-# data['datum'].apply(datetime.datetime.fromisoformat).dt.year
-
-# import os
-# os.getcwd()
-
-# pto1_db = data[data['datum'] > '2021-05-05'].pivot_table(index=["orp_bydliste_kod", 'age_group', 'poradi_davky'], values='pohlavi', aggfunc='count', dropna=False).reset_index().fillna(0).merge(population_pto, how='left', left_on=['orp_bydliste_kod', 'age_group'], right_on=['code', 'age_group'])
-
-# pto1_db['rate'] = pto1_db['pohlavi'] / pto1_db['value']
-
-# pto1_db = pto1_db[~(pto1_db['age_group'] == 'nezařazeno')].reset_index()
-
-# pto1 = pto1_db.rename(columns={'pohlavi': 'n'}).pivot_table(index='orp_bydliste_kod', columns=['poradi_davky', 'age_group'], values=['rate', 'n'])
-
-# pto1.columns = pto1.columns.to_flat_index().str.join('_') # doesn't work, because 1 and 2 are integeres. not strings
-# # quick hack:
-# pto1.columns = pto.columns
-
-# pto1.to_csv('test.csv')
-
-# #######################
-# data[data['datum'] == '2021-05-18'].to_csv('d18.csv')
-
-# data.groupby(['vekova_skupina']).sum()
-
-# data[data['vekova_skupina'] == '0-17'].to_csv('d017.csv')
-
-# data.columns
-
-# age_date = data[data['poradi_davky'] == 1].groupby(['datum', 'vekova_skupina', ], dropna=False)['kraj_kod'].count().reset_index().rename(columns={'kraj_kod': 'value'})
-
-# pd.pivot_table(age_date, index='datum', columns=['vekova_skupina'], values='value').to_csv('age_date.csv')
