@@ -7,7 +7,7 @@ mv /tmp/ockovani-profese.csv "$MYPATH"orp/ockovani-profese.csv
 
 git -C $MYPATH pull
 /home/michal/dev/anaconda3/bin/python3 "$MYPATH"orp/pivot.py
-git -C $MYPATH add orp/orp.csv
+git -C $MYPATH add orp/orp.csv orp/kraje.csv
 DATE=$(date -Iseconds)
-git -C $MYPATH commit -m "ORP updated ${DATE}"
+git -C $MYPATH commit -m "ORP/kraje updated ${DATE}"
 git -C $MYPATH push
