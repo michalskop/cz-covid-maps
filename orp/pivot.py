@@ -187,9 +187,9 @@ out = out.join(pto_chart_desc, how='left')
 # history
 since_date = '2021-03-01'
 since_day = datetime.date.fromisoformat(since_date)
-selected_days = pd.date_range(since_day, today, freq='2W').to_list()
-if selected_days[-1].strftime('%Y-%m-%d') != today.strftime('%Y-%m-%d'):
-    selected_days.append(today)
+selected_days = pd.date_range(since_day, last_day, freq='2W').to_list()
+if selected_days[-1].strftime('%Y-%m-%d') != last_date:
+    selected_days.append(last_day)
 for until_day in selected_days:
     until_date = until_day.strftime('%Y-%m-%d')
     print(until_date) # progress bar
