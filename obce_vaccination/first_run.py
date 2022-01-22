@@ -2,7 +2,6 @@
 
 import datetime
 import io
-from unicodedata import name
 import numpy as np
 import os
 import pandas as pd
@@ -13,6 +12,10 @@ import obce_vaccination.settings as settings
 import zipfile
 
 path = "obce_vaccination/"
+
+# chart width parameter (%)
+chart_width = 75
+min_dist = 10
 
 start_date = '2021-06-01'
 
@@ -25,6 +28,14 @@ data['datum'] = np.nan
 data['absolutně'] = np.nan
 data['dnes'] = np.nan
 data['dnes2'] = np.nan
+
+age_labels = ['0-15', '16-29', '30-49', '50-59', '60-69', '70-79', '80+']
+for age_label in age_labels:
+    data['chart_level_0_' + age_label] = np.nan
+for age_label in age_labels:
+    data['chart_level_1_' + age_label] = np.nan
+for age_label in age_labels:
+    data['chart_level_1_' + age_label + '_desc'] = np.nan
 
 # github connections
 headers = {
@@ -93,7 +104,7 @@ for ex in existing:
     datavac.rename(columns={'ObecKod': 'code', 'neočkovaní': 'unvaccinated_16+', 'neočkovaní.5': 'unvaccinated_0-16'}, inplace=True)
     datavac['unvaccinated'] = datavac['unvaccinated_16+'] + datavac['unvaccinated_0-16']
 
-    newly = datavac.loc[:, ['code', 'unvaccinated']]
+    newly = datavac.loc[:, ['code', 'Kraj', 'unvaccinated']]
 
     newly = origin.merge(newly, on='code', how='left')
     newly['population'] = newly['počet obyv.'].apply(lambda x: int(x.replace(' ', '')))
@@ -105,21 +116,91 @@ for ex in existing:
     shutil.rmtree(path + 'temp/')
     os.makedirs(path + 'temp/')
 
+    # remove Krajs
+    data['kraj'] = data['Kraj']
+    del data['Kraj_x']
+    del data['Kraj_y']
+    del data['Kraj']
+
+# set the first variables (dnes, ...)
 newly['vaccinated'] = (newly['population'] - newly['unvaccinated'])
 cz = round(newly['vaccinated'].sum() / newly['population'].sum() * 1000) / 10
 
-data = data.merge(newly.loc[:, ['code', 'Kraj']], on='code', how='left')
-data['kraj'] = data['Kraj']
-del data['Kraj']
+data = data.merge(newly.loc[:, ['code', 'population']], on='code', how='left')
 data['datum'] = datetime.datetime.fromisoformat(date).strftime('%-d. %-m. %Y')
 data['absolutně'] = data['population'] - data['vaccinated_' + date]
-data = data.merge(newly.loc[:, ['code', 'vaccinated','vaccinated_' + date]], on='code', how='left')
+data = data.merge(newly.loc[:, ['code', 'vaccinated']], on='code', how='left')
 data['absolutně'] = data['vaccinated']
 data['dnes'] = data['vaccinated_' + date]
 data['dnes2'] = data['vaccinated_' + date]
 data.rename(columns={'dnes2': 'dnes: ČR ' + str(cz) + ' %'}, inplace=True)
 del data['vaccinated']
+del data['population']
 
+
+# set first labels
+r2 = requests.get(url_public  + ex)
+if r2.ok:
+    z = zipfile.ZipFile(io.BytesIO(r2.content))
+    z.extractall(path + 'temp/')
+
+fnames = os.listdir(path + 'temp/')
+for fname in fnames:
+    if 'obc' in fname:
+        datavac = pd.read_excel(path + 'temp/' + fname, sheet_name='Očko obce', header=2)
+        datavac = datavac[datavac['ObecKod'] != 'CELKEM']
+        datanon = pd.read_excel(path + 'temp/' + fname, sheet_name='Neočko obce', header=2)
+        datanon = datanon[datanon['ObecKod'] != 'CELKEM']
+
+        datavac_header = pd.read_excel(path + 'temp/' + fname, sheet_name='Očko obce', header=1).columns.tolist()
+        datanon_header = pd.read_excel(path + 'temp/' + fname, sheet_name='Neočko obce', header=1).columns.tolist()
+
+age_labels = ['0-15', '16-29', '30-49', '50-59', '60-69', '70-79', '80+']
+age_labels_info = [
+    {'label': '0-15', 'sheet': 'datavac', 'position': 5},
+    {'label': '16-29', 'sheet': 'datavac', 'position': 4},
+    {'label': '30-49', 'sheet': 'datavac', 'position': 3},
+    {'label': '50-59', 'sheet': 'datavac', 'position': 2},
+    {'label': '60-69', 'sheet': 'datanon', 'position': 1},
+    {'label': '70-79', 'sheet': 'datanon', 'position': 2},
+    {'label': '80+', 'sheet': 'datanon', 'position': 3}
+]
+
+newly = datavac.loc[:, ['ObecKod', 'Obec']].rename(columns={'ObecKod': 'code'})
+for age in age_labels_info:
+    if age['sheet'] == 'datavac':
+        d = datavac
+        pos_pop = age['position']
+        pos_val = age['position']
+    else:
+        d = datanon
+        pos_pop = age['position']
+        pos_val = age['position'] * 2 + 1
+    newly['xchart_level_0_' + age['label']] = round(d['neočkovaní.' + str(pos_val)] / d['populace.' + str(pos_pop)] * chart_width).replace(np.inf, 0)
+    newly['xchart_level_1_' + age['label']] = (chart_width - newly['xchart_level_0_' + age['label']]).fillna(0).astype(int)
+    newly['xchart_level_0_' + age['label']] = newly['xchart_level_0_' + age['label']].fillna(0).astype(int)
+    newly['xchart_level_1_' + age['label'] + '_desc'] = (100 - round(d['neočkovaní.' + str(pos_val)] / d['populace.' + str(pos_pop)] * 100)).replace(np.inf, 0).fillna(0)
+    newly['xchart_level_1_' + age['label'] + '_desc'] = newly['xchart_level_1_' + age['label'] + '_desc'].apply(lambda x: np.NaN if x < min_dist else x).astype(pd.Int64Dtype())
+
+del newly['Obec']
+
+# replace in data
+data = data.merge(newly, on='code', how='left')
+
+for age_label in age_labels:
+    data['chart_level_0_' + age_label] = data['xchart_level_0_' + age_label]
+    data['chart_level_1_' + age_label] = data['xchart_level_1_' + age_label]
+    data['chart_level_1_' + age_label + '_desc'] = data['xchart_level_1_' + age_label + '_desc']
+    del data['xchart_level_0_' + age_label]
+    del data['xchart_level_1_' + age_label]
+    del data['xchart_level_1_' + age_label + '_desc']
+
+# remove files
+shutil.rmtree(path + 'temp/')
+os.makedirs(path + 'temp/')
+
+
+# save file
 datax = data.copy()
 for c in datax.columns:
     if 'vaccinated' in c:
@@ -129,3 +210,4 @@ for c in datax.columns:
 datax.to_csv(path + 'data.csv', index=False)
 
 # test
+# data.columns
