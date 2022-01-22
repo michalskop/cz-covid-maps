@@ -211,3 +211,17 @@ datax.to_csv(path + 'data.csv', index=False)
 
 # test
 # data.columns
+
+# popup
+# <div class="sc-only">&nbsp;</div>
+
+# <strong>očkovaní podle věku (% populace)</strong>
+
+# <div class="sc-only">&nbsp;</div>
+
+# <ul>
+
+# popup = ''
+# for age_label in reversed(age_labels):
+#     popup += "<li><span class='party-bar level-1' style='width: {{chart_level_1_" + age_label + "}}%'><span class='party-desc'>{{chart_level_1_" + age_label + "_desc}}&nbsp;</span></span><span class='party-bar level-0' style='width: {{chart_level_0_" + age_label + "}}%'><span  class='party-desc'>&nbsp;</span></span>&nbsp;<span class='party-name'>" + age_label + "</span></li>"
+# print(popup)
