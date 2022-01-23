@@ -29,7 +29,7 @@ jobs:
       run: |
         pip install -r obce_vaccination/requirements.txt
     - name: Run analysis 
-      run: python obce/update_data.py
+      run: python obce_vaccination/update_data.py
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated"
