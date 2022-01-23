@@ -111,7 +111,7 @@ if len(existing) > 0:
     data['datum'] = datetime.datetime.fromisoformat(date).strftime('%-d. %-m. %Y')
     data['absolutně'] = data['population'] - data['vaccinated_' + date]
     data = data.merge(newly.loc[:, ['code', 'vaccinated']], on='code', how='left')
-    data['absolutně'] = data['vaccinated']
+    data['absolutně'] = data['vaccinated'].astype(pd.Int64Dtype())
     data['dnes'] = data['vaccinated_' + date]
     data['dnes2'] = data['vaccinated_' + date]
     data.rename(columns={'dnes2': 'dnes: ČR ' + str(cz) + ' %'}, inplace=True)
@@ -169,9 +169,9 @@ if len(existing) > 0:
     data = data.merge(newly, on='code', how='left')
 
     for age_label in age_labels:
-        data['chart_level_0_' + age_label] = data['xchart_level_0_' + age_label]
-        data['chart_level_1_' + age_label] = data['xchart_level_1_' + age_label]
-        data['chart_level_1_' + age_label + '_desc'] = data['xchart_level_1_' + age_label + '_desc']
+        data['chart_level_0_' + age_label] = data['xchart_level_0_' + age_label].astype(pd.Int64Dtype())
+        data['chart_level_1_' + age_label] = data['xchart_level_1_' + age_label].astype(pd.Int64Dtype())
+        data['chart_level_1_' + age_label + '_desc'] = data['xchart_level_1_' + age_label + '_desc'].astype(pd.Int64Dtype())
         del data['xchart_level_0_' + age_label]
         del data['xchart_level_1_' + age_label]
         del data['xchart_level_1_' + age_label + '_desc']
