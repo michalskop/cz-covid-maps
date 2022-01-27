@@ -125,7 +125,7 @@ data3['počet obyv.'] = data3['počet obyv.'].str.replace(' ','').astype(int)
 data3 = data3.merge(pt2_selected_last, on='code')
 data3.rename(columns={'počet': 'prevalence'}, inplace=True)
 
-selected2_last = selected2.iloc[:, [0, -1]].apply(round).astype(int)
+selected2_last = selected2.iloc[:, [0, -1]].apply(round).replace([np.inf, -np.inf], np.nan).fillna(0).astype(int)
 selected2_last.columns = ['code', '/100 tis.']
 data3 = data3.merge(selected2_last, on='code')
 
@@ -138,7 +138,7 @@ data3 = data3.merge(t, on='code')
 data3 = data3.merge(pt_selected_last, on='code')
 data3.rename(columns={'počet': 'incidence 7d'}, inplace=True)
 
-data3 = data3.merge(selected.iloc[:, [0, -1]].apply(round).astype(int), on='code')
+data3 = data3.merge(selected.iloc[:, [0, -1]].apply(round).replace([np.inf, -np.inf], np.nan).astype(int), on='code')
 c = data3.columns.tolist()
 c[-1] = '/100tis.'
 data3.columns = c
