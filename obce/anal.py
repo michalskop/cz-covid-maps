@@ -138,7 +138,7 @@ data3 = data3.merge(t, on='code')
 data3 = data3.merge(pt_selected_last, on='code')
 data3.rename(columns={'počet': 'incidence 7d'}, inplace=True)
 
-data3 = data3.merge(selected.iloc[:, [0, -1]].apply(round).replace([np.inf, -np.inf], np.nan).astype(int), on='code')
+data3 = data3.merge(selected.iloc[:, [0, -1]].apply(round).replace([np.inf, -np.inf], np.nan).fillna(0).astype(int), on='code')
 c = data3.columns.tolist()
 c[-1] = '/100tis.'
 data3.columns = c
