@@ -15,7 +15,7 @@ path = "obce_vaccination/"
 url = "https://api.github.com/repos/HlidacStatu/UZIS_COVID_DATA/contents"
 url_public = "https://github.com/HlidacStatu/UZIS_COVID_DATA/raw/main/"
 
-last_days = 3
+last_days = 5
 
 # chart width parameter (%)
 chart_width = 75
@@ -43,6 +43,7 @@ for day in days:
         j1 = r1.json()
 
         for k in j1:
+            # print(k['name'])
             if ('dle_obc' in k['name'].lower()) and ('01_' in k['name'].lower()) and (('.xlsx' in k['name'].lower()) or ('.zip' in k['name'].lower())):
                 fpath = hsdate + '/' + k['name']
                 if '/03_' not in fpath:
