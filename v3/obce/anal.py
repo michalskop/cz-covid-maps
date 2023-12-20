@@ -80,4 +80,4 @@ data['dnes-7'] = round(sincidence[last_date_7], 1) / data['počet obyv.'].str.re
 data['změna'] = round(sincidence[last_date] - sincidence[last_date_7], 1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
 
 # save data
-data.to_csv(localpath + "data.csv", index=False)
+data.to_csv(localpath + "incidence.csv", index=False)
