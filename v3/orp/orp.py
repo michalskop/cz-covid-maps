@@ -138,4 +138,12 @@ for i in range(0, len(last_year_weeks_dates)):
 for i in range(0, len(last_week_dates)):
   data[last_week_days[i].strftime('%-d.%-m.%y')] = xprevalence[last_week_dates[i]].round(1) / data['počet obyv.'] * 100000
 
+# add today
+data[today_title] = round(xprevalence[last_date], 1) / data['počet obyv.'] * 100000
+data['dnes'] = round(xprevalence[last_date], 1) / data['počet obyv.'] * 100000
+data['dnes-7'] = round(xprevalence[last_date_7], 1) / data['počet obyv.'] * 100000
+data['změna'] = round(xprevalence[last_date] - xprevalence[last_date_7], 1) / data['počet obyv.'] * 100000
+
+# save data
+data.to_csv(localpath + "prevalence.csv", index=False, decimal=',', float_format="%.1f")
 
