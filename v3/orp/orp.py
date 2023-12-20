@@ -106,7 +106,7 @@ data['datum'] = f'{last_day.day}. {last_day.month}. {last_day.year}'
 last_day_7 = last_day + datetime.timedelta(days=-7)
 last_date_7 = last_day_7.isoformat()
 data['datum-7'] = f'{last_day_7.day}. {last_day_7.month}. {last_day_7.year}'
-last_prevalence = round(df0p['aktivni_pripady'][0], 1)
+last_prevalence = round(df0p['aktivni_pripady'][0] / origin['počet obyv.'].sum() * 100000, 1)
 today_title = 'dnes (ČR: ' + str(last_prevalence).replace('.', ',') + ')'
 
 # prepare empty
