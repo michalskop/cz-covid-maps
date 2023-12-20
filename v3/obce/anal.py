@@ -2,6 +2,7 @@
 
 import datetime
 import pandas as pd
+import numpy as np
 
 localpath = "v3/obce/"
 
@@ -58,7 +59,7 @@ days = [datetime.datetime.fromisoformat(x).date() for x in dates]
 last_day_dow = last_day.weekday()
 one_year_ago = last_day + datetime.timedelta(days=-365)
 last_year_weeks_days = [x for x in days if (x >= one_year_ago and x.weekday() == last_day_dow)]
-last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-2]
+last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-1]
 # add last week
 last_week_days = sorted([last_day + datetime.timedelta(days=-x) for x in range(0, 8)])
 last_week_dates = sorted([x.isoformat() for x in last_week_days])
@@ -68,7 +69,7 @@ for i in range(0, len(last_year_weeks_dates)):
   data["week_" + str(i)] = (sincidence[last_year_weeks_dates[i]] / sincidence.loc[:, last_year_weeks_dates].max(axis=1) * 100).round().fillna(0).astype(int)
 
 # add last year and last week into the data for the map
-for i in range(0, len(last_year_weeks_dates)):
+for i in range(0, len(last_year_weeks_dates[:-1])):
   data[last_year_weeks_days[i].strftime('%-d.%-m.%y')] = sincidence[last_year_weeks_dates[i]].round(1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
 for i in range(0, len(last_week_dates)):
   data[last_week_days[i].strftime('%-d.%-m.%y')] = sincidence[last_week_dates[i]].round(1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
@@ -78,6 +79,11 @@ data[today_title] = round(sincidence[last_date], 1) / data['počet obyv.'].str.r
 data['dnes'] = round(sincidence[last_date], 1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
 data['dnes-7'] = round(sincidence[last_date_7], 1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
 data['změna'] = round(sincidence[last_date] - sincidence[last_date_7], 1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
+
+# vojenske ujezdy
+vu_index = data[data['code'].isin(vu_codes)].index
+selected_columns = [x for x in data.columns if x not in (origin.columns.to_list() + ['datum', 'datum-7'])]
+data.loc[vu_index, selected_columns] = np.nan
 
 # save data
 data.to_csv(localpath + "incidence.csv", index=False, decimal=",", float_format="%.1f")
