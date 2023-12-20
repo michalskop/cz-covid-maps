@@ -86,4 +86,4 @@ selected_columns = [x for x in data.columns if x not in (origin.columns.to_list(
 data.loc[vu_index, selected_columns] = np.nan
 
 # save data
-data.to_csv(localpath + "incidence.csv", index=False, decimal=",", float_format="%.1f")
+data.to_csv(localpath + "incidence.csv", index=False, decimal=",", float_format="%.0f")
