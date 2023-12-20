@@ -17,6 +17,8 @@ urlp = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/mestske-casti.csv"
 dfp = pd.read_csv(urlp, delimiter=",")
 url0 = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/incidence-7-14-cr.csv"
 df0 = pd.read_csv(url0, delimiter=",")
+url0p = "https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/zakladni-prehled.csv"
+df0p = pd.read_csv(url0p, delimiter=",")
 
 # read data from 'origin.csv'
 origin = pd.read_csv(localpath + "origin.csv")
@@ -48,7 +50,7 @@ xprevalence = pd.concat([pprevalence, sprevalence], axis=0)
 xprevalence.index = xprevalence['kód']
 
 # prepare data for output - incidence
-data = origin
+data = origin.copy()
 data.index = data['kód']
 
 data['datum'] = f'{last_day.day}. {last_day.month}. {last_day.year}'
@@ -72,7 +74,7 @@ days = [datetime.datetime.fromisoformat(x).date() for x in dates]
 last_day_dow = last_day.weekday()
 one_year_ago = last_day + datetime.timedelta(days=-365)
 last_year_weeks_days = [x for x in days if (x >= one_year_ago and x.weekday() == last_day_dow)]
-last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-1]
+last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-2]
 # add last week
 last_week_days = sorted([last_day + datetime.timedelta(days=-x) for x in range(0, 8)])
 last_week_dates = sorted([x.isoformat() for x in last_week_days])
@@ -95,4 +97,45 @@ data['změna'] = round(xincidence[last_date] - xincidence[last_date_7], 1) / dat
 
 # save data
 data.to_csv(localpath + "incidence.csv", index=False, decimal=',', float_format="%.1f")
+
+# prepare data for output - prevalence
+data = origin.copy()
+data.index = data['kód']
+
+data['datum'] = f'{last_day.day}. {last_day.month}. {last_day.year}'
+last_day_7 = last_day + datetime.timedelta(days=-7)
+last_date_7 = last_day_7.isoformat()
+data['datum-7'] = f'{last_day_7.day}. {last_day_7.month}. {last_day_7.year}'
+last_prevalence = round(df0p['aktivni_pripady'][0], 1)
+today_title = 'dnes (ČR: ' + str(last_prevalence).replace('.', ',') + ')'
+
+# prepare empty
+data[today_title] = 0
+data['dnes'] = 0
+data['dnes-7'] = 0
+data['změna'] = 0
+
+# get only once a week from the last year and the whole last week
+dates = xprevalence.columns[1:].to_list()
+days = [datetime.datetime.fromisoformat(x).date() for x in dates]
+
+last_day_dow = last_day.weekday()
+one_year_ago = last_day + datetime.timedelta(days=-365)
+last_year_weeks_days = [x for x in days if (x >= one_year_ago and x.weekday() == last_day_dow)]
+last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-2]
+# add last week
+last_week_days = sorted([last_day + datetime.timedelta(days=-x) for x in range(0, 8)])
+last_week_dates = sorted([x.isoformat() for x in last_week_days])
+
+
+# add last year weeks into the data for the chart
+for i in range(0, len(last_year_weeks_dates)):
+  data["week_" + str(i)] = (xprevalence[last_year_weeks_dates[i]] / xprevalence.loc[:, last_year_weeks_dates].max(axis=1) * 100).round().astype(int)
+
+# add last year and last week into the data for the map
+for i in range(0, len(last_year_weeks_dates)):
+  data[last_year_weeks_days[i].strftime('%-d.%-m.%y')] = xprevalence[last_year_weeks_dates[i]].round(1) / data['počet obyv.'] * 100000
+for i in range(0, len(last_week_dates)):
+  data[last_week_days[i].strftime('%-d.%-m.%y')] = xprevalence[last_week_dates[i]].round(1) / data['počet obyv.'] * 100000
+
 
