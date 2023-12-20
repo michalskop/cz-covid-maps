@@ -1,0 +1,207 @@
+kód,obec,kraj,počet obyv.
+1000,Praha,10,1357326
+2001,Benešov,20,63219
+2002,Beroun,20,69040
+2003,Brandýs nad Labem-Stará Boleslav,20,120779
+2004,Čáslav,20,26427
+2005,Černošice,20,158235
+2006,Český Brod,20,20725
+2007,Dobříš,20,23935
+2008,Hořovice,20,31477
+2009,Kladno,20,126779
+2010,Kolín,20,86543
+2011,Kralupy nad Vltavou,20,34023
+2012,Kutná Hora,20,51645
+2013,Lysá nad Labem,20,31575
+2014,Mělník,20,46205
+2015,Mladá Boleslav,20,115318
+2016,Mnichovo Hradiště,20,18558
+2017,Neratovice,20,32872
+2018,Nymburk,20,41484
+2019,Poděbrady,20,32404
+2020,Příbram,20,71498
+2021,Rakovník,20,56058
+2022,Říčany,20,77533
+2023,Sedlčany,20,22121
+2024,Slaný,20,41929
+2025,Vlašim,20,26226
+2026,Votice,20,12783
+3101,Blatná,31,13685
+3102,České Budějovice,31,166778
+3103,Český Krumlov,31,41867
+3104,Dačice,31,18507
+3105,Jindřichův Hradec,31,46910
+3106,Kaplice,31,20171
+3107,Milevsko,31,18188
+3108,Písek,31,54337
+3109,Prachatice,31,33973
+3110,Soběslav,31,22423
+3111,Strakonice,31,45297
+3112,Tábor,31,81475
+3113,Trhové Sviny,31,19580
+3114,Třeboň,31,24984
+3115,Týn nad Vltavou,31,14068
+3116,Vimperk,31,17471
+3117,Vodňany,31,12589
+3201,Blovice,32,12463
+3202,Domažlice,32,40681
+3203,Horažďovice,32,11522
+3204,Horšovský Týn,32,15115
+3205,Klatovy,32,51410
+3206,Kralovice,32,23015
+3207,Nepomuk,32,11279
+3208,Nýřany,32,60054
+3209,Plzeň,32,201517
+3210,Přeštice,32,23046
+3211,Rokycany,32,50258
+3212,Stod,32,24201
+3213,Stříbro,32,17656
+3214,Sušice,32,23921
+3215,Tachov,32,39250
+4101,Aš,41,17265
+4102,Cheb,41,50190
+4103,Karlovy Vary,41,88206
+4104,Kraslice,41,12832
+4105,Mariánské Lázně,41,25181
+4106,Ostrov,41,26789
+4107,Sokolov,41,73132
+4201,Bílina,42,19626
+4202,Děčín,42,75342
+4203,Chomutov,42,80665
+4204,Kadaň,42,43370
+4205,Litoměřice,42,58580
+4206,Litvínov,42,35946
+4207,Louny,42,43556
+4208,Lovosice,42,27626
+4209,Most,42,72170
+4210,Podbořany,42,15712
+4211,Roudnice nad Labem,42,33151
+4212,Rumburk,42,32429
+4213,Teplice,42,108055
+4214,Ústí nad Labem,42,118839
+4215,Varnsdorf,42,19498
+4216,Žatec,42,27772
+5101,Česká Lípa,51,76995
+5102,Frýdlant,51,24682
+5103,Jablonec nad Nisou,51,57541
+5104,Jilemnice,51,22078
+5105,Liberec,51,149554
+5106,Nový Bor,51,26349
+5107,Semily,51,25605
+5108,Tanvald,51,20542
+5109,Turnov,51,33505
+5110,Železný Brod,51,12326
+5201,Broumov,52,15665
+5202,Dobruška,52,20217
+5203,Dvůr Králové nad Labem,52,27118
+5204,Hořice,52,18536
+5205,Hradec Králové,52,148986
+5206,Jaroměř,52,19658
+5207,Jičín,52,48653
+5208,Kostelec nad Orlicí,52,25176
+5209,Náchod,52,60788
+5210,Nová Paka,52,13389
+5211,Nové Město nad Metují,52,14211
+5212,Nový Bydžov,52,18003
+5213,Rychnov nad Kněžnou,52,34793
+5214,Trutnov,52,62699
+5215,Vrchlabí,52,27375
+5301,Česká Třebová,53,17834
+5302,Hlinsko,53,21127
+5303,Holice,53,18656
+5304,Chrudim,53,85271
+5305,Králíky,53,8557
+5306,Lanškroun,53,23082
+5307,Litomyšl,53,27691
+5308,Moravská Třebová,53,25961
+5309,Pardubice,53,134359
+5310,Polička,53,19904
+5311,Přelouč,53,26522
+5312,Svitavy,53,31020
+5313,Ústí nad Orlicí,53,26493
+5314,Vysoké Mýto,53,32804
+5315,Žamberk,53,29480
+6301,Bystřice nad Pernštejnem,63,19675
+6302,Havlíčkův Brod,63,53841
+6303,Humpolec,63,18492
+6304,Chotěboř,63,21745
+6305,Jihlava,63,102996
+6306,Moravské Budějovice,63,22919
+6307,Náměšť nad Oslavou,63,13566
+6308,Nové Město na Moravě,63,19419
+6309,Pacov,63,9478
+6310,Pelhřimov,63,46163
+6311,Světlá nad Sázavou,63,19590
+6312,Telč,63,13045
+6313,Třebíč,63,73908
+6314,Velké Meziříčí,63,37205
+6315,Žďár nad Sázavou,63,42735
+6401,Blansko,64,57224
+6402,Boskovice,64,52822
+6403,Brno,64,396101
+6404,Břeclav,64,59512
+6405,Bučovice,64,16573
+6406,Hodonín,64,59847
+6407,Hustopeče,64,37166
+6408,Ivančice,64,25109
+6409,Kuřim,64,24041
+6410,Kyjov,64,55405
+6411,Mikulov,64,20898
+6412,Moravský Krumlov,64,22798
+6413,Pohořelice,64,15558
+6414,Rosice,64,26903
+6415,Slavkov u Brna,64,24877
+6416,Šlapanice,64,72483
+6417,Tišnov,64,32576
+6418,Veselí nad Moravou,64,36867
+6419,Vyškov,64,52824
+6420,Znojmo,64,93230
+6421,Židlochovice,64,34386
+7101,Hranice,71,34376
+7102,Jeseník,71,36991
+7103,Konice,71,11836
+7104,Lipník nad Bečvou,71,15226
+7105,Litovel,71,23804
+7106,Mohelnice,71,18746
+7107,Olomouc,71,167827
+7108,Prostějov,71,96881
+7109,Přerov,71,78578
+7110,Šternberk,71,24028
+7111,Šumperk,71,68086
+7112,Uničov,71,22281
+7113,Zábřeh,71,33142
+7201,Bystřice pod Hostýnem,72,15131
+7202,Holešov,72,21683
+7203,Kroměříž,72,67708
+7204,Luhačovice,72,18766
+7205,Otrokovice,72,34094
+7206,Rožnov pod Radhoštěm,72,35029
+7207,Uherské Hradiště,72,89803
+7208,Uherský Brod,72,51693
+7209,Valašské Klobouky,72,22889
+7210,Valašské Meziříčí,72,42503
+7211,Vizovice,72,17250
+7212,Vsetín,72,64648
+7213,Zlín,72,99334
+8001,Bílovec,80,25728
+8002,Bohumín,80,33644
+8003,Bruntál,80,35543
+8004,Český Těšín,80,24864
+8005,Frenštát pod Radhoštěm,80,19637
+8006,Frýdek-Místek,80,112690
+8007,Frýdlant nad Ostravicí,80,25418
+8008,Havířov,80,85861
+8009,Hlučín,80,40416
+8010,Jablunkov,80,22480
+8011,Karviná,80,61263
+8012,Kopřivnice,80,40686
+8013,Kravaře,80,21080
+8014,Krnov,80,39407
+8015,Nový Jičín,80,48690
+8016,Odry,80,17073
+8017,Opava,80,100305
+8018,Orlová,80,36534
+8019,Ostrava,80,316149
+8020,Rýmařov,80,14884
+8021,Třinec,80,54081
+8022,Vítkov,80,13241
