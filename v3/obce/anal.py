@@ -69,6 +69,8 @@ for i in range(0, len(last_year_weeks_dates)):
   data["week_" + str(i)] = (sincidence[last_year_weeks_dates[i]] / sincidence.loc[:, last_year_weeks_dates].max(axis=1) * 100).round().fillna(0).astype(int)
 
 # add last year and last week into the data for the map
+# get strange space removed
+data['počet obyv.'] = data['počet obyv.'].str.replace(' ', '')
 for i in range(0, len(last_year_weeks_dates[:-1])):
   data[last_year_weeks_days[i].strftime('%-d.%-m.%y')] = sincidence[last_year_weeks_dates[i]].round(1) / data['počet obyv.'].str.replace('\s+', '').astype(int) * 100000
 for i in range(0, len(last_week_dates)):
