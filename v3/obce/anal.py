@@ -85,7 +85,7 @@ data['změna'] = round(sincidence[last_date] - sincidence[last_date_7], 1) / dat
 # vojenske ujezdy
 vu_index = data[data['code'].isin(vu_codes)].index
 selected_columns = [x for x in data.columns if x not in (origin.columns.to_list() + ['datum', 'datum-7'])]
-data.loc[vu_index, selected_columns] = np.nan
+data.loc[vu_index, selected_columns] = 0
 
 # save data
 data.to_csv(localpath + "incidence.csv", index=False, decimal=",", float_format="%.0f")
