@@ -59,7 +59,7 @@ days = [datetime.datetime.fromisoformat(x).date() for x in dates]
 last_day_dow = last_day.weekday()
 one_year_ago = last_day + datetime.timedelta(days=-365)
 last_year_weeks_days = [x for x in days if (x >= one_year_ago and x.weekday() == last_day_dow)]
-last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days][:-1]
+last_year_weeks_dates = [x.isoformat() for x in last_year_weeks_days]
 # add last week
 last_week_days = sorted([last_day + datetime.timedelta(days=-x) for x in range(0, 8)])
 last_week_dates = sorted([x.isoformat() for x in last_week_days])
