@@ -13,4 +13,5 @@ df = pd.read_csv(url, delimiter=",")
 pt = pd.pivot_table(df, index='datum',  values='incidence_7', fill_value=0, aggfunc='sum').reset_index()
 
 # save
+pt.rename(columns={'datum': 'datum', 'incidence_7': 'Týdenní přírůstek'}, inplace=True )
 pt.to_csv(localpath + "incidence_7.csv", index=False)
