@@ -1,0 +1,46 @@
+name: Update data v3
+
+on:
+  schedule:
+    - cron: "6 6,18 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install Python dependencies
+        run: pip install -r v3/requirements.txt
+
+      - name: Run anal.py
+        run: python v3/kraje/anal.py
+
+      - name: Run jip.py
+        run: python v3/lines/jip.py
+
+      - name: Run line.py
+        run: python v3/lines/line.py
+
+      - name: Run orp.py
+        run: python v3/orp/orp.py
+
+      - name: Run anal.py
+        run: python v3/obce/anal.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+          git add .
+          timestamp=$(date "+%Y-%m-%dT%H:%M:%S")
+          git commit -m "Latest data: ${timestamp}" || exit 0
+          git push

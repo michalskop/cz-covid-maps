@@ -1,6 +1,5 @@
 """Weekly JIP and hospitalizations."""
 
-import datetime
 import pandas as pd
 
 localpath = "v3/lines/"
